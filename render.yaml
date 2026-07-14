@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: real-estate-pdf-service
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: AGENT_NAME
+        value: "JOHN DOE"
+      - key: AGENT_TITLE
+        value: "Luxury Property Advisor"
+      - key: AGENT_PHONE
+        value: "+1 (555) 019-2834"
+      - key: AGENT_EMAIL
+        value: "broker@luxuryrealestate.com"
+      - key: AGENT_WHATSAPP
+        value: "https://wa.me/15550192834"
+      - key: AGENT_INSTAGRAM
+        value: "https://instagram.com/luxury_homes"
+      - key: AGENT_LINKEDIN
+        value: "https://linkedin.com/in/luxury_homes"
+      - key: AGENT_TWITTER
+        value: "https://twitter.com/luxury_homes"
