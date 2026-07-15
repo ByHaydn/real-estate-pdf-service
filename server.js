@@ -96,6 +96,7 @@ app.post('/', async (req, res) => {
   const amenities = body.amenities || '';
   const valuation = body.valuation || '';
   const propertyUrl = body.property_url || 'https://www.zillow.com';
+  const customerName = body.customer_name || '';
 
   // Apply intelligent price formatting
   const price = formatPrice(priceRaw, location);
@@ -120,6 +121,13 @@ app.post('/', async (req, res) => {
     // ==========================================
 
     // 1. Premium Header Banner
+    if (customerName) {
+      doc.fillColor('#B7791F') // Premium gold/bronze color
+         .font(fontBold)
+         .fontSize(8.5)
+         .text(`EXCLUSIVELY PRESENTED TO ${customerName.toUpperCase()}`, 50, 22, { width: 500, align: 'center' });
+    }
+
     doc.rect(50, 40, 500, 60).fill('#1A252C');
     doc.fillColor('#FFFFFF')
        .font(fontBold)
@@ -285,7 +293,6 @@ app.post('/', async (req, res) => {
        .fontSize(9.5)
        .text(AGENT_TITLE, 70, cardY + 30);
     
-    const customerName = body.customer_name || '';
     const greetingText = customerName
       ? `Hi ${customerName}, thank you for your interest in this listing. Let me guide you to your next dream home.`
       : "Thank you for your interest in our premium real estate listings. Let me guide you to your next dream home.";
