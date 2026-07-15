@@ -125,7 +125,7 @@ app.post('/', async (req, res) => {
       doc.fillColor('#B7791F') // Premium gold/bronze color
          .font(fontBold)
          .fontSize(8.5)
-         .text(`EXCLUSIVELY PRESENTED TO ${customerName.toUpperCase()}`, 50, 22, { width: 500, align: 'center' });
+         .text(`A CUSTOM SELECTION FOR ${customerName.toUpperCase()}`, 50, 22, { width: 500, align: 'center' });
     }
 
     doc.rect(50, 40, 500, 60).fill('#1A252C');
