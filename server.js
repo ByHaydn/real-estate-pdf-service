@@ -125,16 +125,16 @@ app.post('/', async (req, res) => {
       doc.fillColor('#B7791F') // Premium gold/bronze color
          .font(fontBold)
          .fontSize(8.5)
-         .text(`A CUSTOM SELECTION FOR ${customerName.toUpperCase()}`, 50, 22, { width: 500, align: 'center' });
+         .text(`A CUSTOM SELECTION FOR ${customerName.toUpperCase()}`, 50, 32, { width: 500, align: 'center' });
     }
 
-    doc.rect(50, 40, 500, 60).fill('#1A252C');
+    doc.rect(50, 50, 500, 60).fill('#1A252C');
     doc.fillColor('#FFFFFF')
        .font(fontBold)
        .fontSize(16)
-       .text(title.toUpperCase(), 60, 60, { width: 480, align: 'center' });
+       .text(title.toUpperCase(), 60, 70, { width: 480, align: 'center' });
 
-    doc.y = 120; // Move below header
+    doc.y = 130; // Move below header
 
     // 2. Specifications Card
     const specsY = doc.y;
