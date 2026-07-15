@@ -285,9 +285,14 @@ app.post('/', async (req, res) => {
        .fontSize(9.5)
        .text(AGENT_TITLE, 70, cardY + 30);
     
+    const customerName = body.customer_name || '';
+    const greetingText = customerName
+      ? `Hi ${customerName}, thank you for your interest in this listing. Let me guide you to your next dream home.`
+      : "Thank you for your interest in our premium real estate listings. Let me guide you to your next dream home.";
+
     doc.fillColor('#4A5568')
        .fontSize(8.5)
-       .text("Thank you for your interest in our premium real estate listings. Let me guide you to your next dream home.", 70, cardY + 50, { width: 230, lineGap: 2 });
+       .text(greetingText, 70, cardY + 50, { width: 230, lineGap: 2 });
 
     // Right Column: Direct Contact & Clickable Social Media Links
     const rightColX = 320;
