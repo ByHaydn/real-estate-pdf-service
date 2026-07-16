@@ -23,13 +23,31 @@ const AGENT_INSTAGRAM = process.env.AGENT_INSTAGRAM || "https://instagram.com/lu
 const AGENT_LINKEDIN = process.env.AGENT_LINKEDIN || "https://linkedin.com/in/luxury_homes";
 const AGENT_TWITTER = process.env.AGENT_TWITTER || "https://twitter.com/luxury_homes";
 
-// Helper function to download an image and return it as a Buffer
+// Helper function to download an image and return it as a Buffer with RAM caching
+const imageCache = new Map();
 async function fetchImageBuffer(url) {
+  if (!url) return null;
+  if (imageCache.has(url)) {
+    console.log(`[Cache Hit] Image fetched from RAM: ${url}`);
+    return imageCache.get(url);
+  }
   try {
     const response = await fetch(url);
-    if (!response.ok) return null;
+    if (!response.ok) {
+      console.error(`Failed to fetch image: ${url}, Status: ${response.status}`);
+      return null;
+    }
     const arrayBuffer = await response.arrayBuffer();
-    return arrayBuffer ? Buffer.from(arrayBuffer) : null;
+    const buffer = arrayBuffer ? Buffer.from(arrayBuffer) : null;
+    if (buffer) {
+      imageCache.set(url, buffer);
+      // Prevent memory leaks by keeping cache under 50 items
+      if (imageCache.size > 50) {
+        const firstKey = imageCache.keys().next().value;
+        imageCache.delete(firstKey);
+      }
+    }
+    return buffer;
   } catch (e) {
     console.error(`Failed to download image from ${url}:`, e);
     return null;
