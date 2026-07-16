@@ -147,19 +147,19 @@ app.post('/', async (req, res) => {
 
     if (campaignType === 'JustListed') {
       subtitleText = customerName ? `NEW PORTFOLIO OPPORTUNITY FOR ${customerName.toUpperCase()}` : 'NEW PORTFOLIO OPPORTUNITY';
-      bannerColor = '#1E293B'; // Dark Slate
+      bannerColor = '#B7791F'; // Premium gold banner
       badgeText = 'JUST LISTED';
-      badgeColor = '#B7791F'; // Premium gold
+      badgeColor = '#1E293B'; // Dark Slate badge for contrast
     } else if (campaignType === 'PriceDrop') {
       subtitleText = customerName ? `EXCLUSIVE SAVINGS FOR ${customerName.toUpperCase()}` : 'SPECIAL PRICE REDUCTION';
-      bannerColor = '#742A2A'; // Red/wine
+      bannerColor = '#742A2A'; // Red/wine banner
       badgeText = 'PRICE REDUCED';
-      badgeColor = '#E53E3E'; // Red
+      badgeColor = '#E53E3E'; // Red badge
     } else if (campaignType === 'PrivateInvite') {
       subtitleText = customerName ? `PRIVATE PREVIEW INVITATION FOR ${customerName.toUpperCase()}` : 'PRIVATE PREVIEW INVITATION';
-      bannerColor = '#2D3748'; // Charcoal
+      bannerColor = '#2D3748'; // Charcoal banner
       badgeText = 'EXCLUSIVE PREVIEW';
-      badgeColor = '#3182CE'; // Blue
+      badgeColor = '#3182CE'; // Blue badge
     }
 
     if (badgeText) {
