@@ -97,6 +97,7 @@ app.post('/', async (req, res) => {
   const valuation = body.valuation || '';
   const propertyUrl = body.property_url || 'https://www.zillow.com';
   const customerName = body.customer_name || '';
+  const campaignType = body.campaign_type || 'Exclusive';
 
   // Apply intelligent price formatting
   const price = formatPrice(priceRaw, location);
@@ -108,7 +109,7 @@ app.post('/', async (req, res) => {
   const matchDesc = html.match(/<div class='desc'>\s*<p>(.*?)<\/p>/s) || html.match(/<p style='margin-top:16px'>(.*?)<\/p>/s);
   const description = body.description || (matchDesc ? matchDesc[1] : '');
 
-  console.log(`Parsed - Title: "${title}", Total Images: ${imageUrls.length}`);
+  console.log(`Parsed - Title: "${title}", Campaign: "${campaignType}", Total Images: ${imageUrls.length}`);
 
   try {
     const doc = new PDFDocument({ margin: 50, autoFirstPage: true });
@@ -121,14 +122,44 @@ app.post('/', async (req, res) => {
     // ==========================================
 
     // 1. Premium Header Banner
-    if (customerName) {
+    let subtitleText = customerName ? `A CUSTOM SELECTION FOR ${customerName.toUpperCase()}` : '';
+    let bannerColor = '#1A252C'; // Default dark navy
+    let badgeText = '';
+    let badgeColor = '';
+
+    if (campaignType === 'JustListed') {
+      subtitleText = customerName ? `NEW PORTFOLIO OPPORTUNITY FOR ${customerName.toUpperCase()}` : 'NEW PORTFOLIO OPPORTUNITY';
+      bannerColor = '#1E293B'; // Dark Slate
+      badgeText = 'JUST LISTED';
+      badgeColor = '#B7791F'; // Premium gold
+    } else if (campaignType === 'PriceDrop') {
+      subtitleText = customerName ? `EXCLUSIVE SAVINGS FOR ${customerName.toUpperCase()}` : 'SPECIAL PRICE REDUCTION';
+      bannerColor = '#742A2A'; // Red/wine
+      badgeText = 'PRICE REDUCED';
+      badgeColor = '#E53E3E'; // Red
+    } else if (campaignType === 'PrivateInvite') {
+      subtitleText = customerName ? `PRIVATE PREVIEW INVITATION FOR ${customerName.toUpperCase()}` : 'PRIVATE PREVIEW INVITATION';
+      bannerColor = '#2D3748'; // Charcoal
+      badgeText = 'EXCLUSIVE PREVIEW';
+      badgeColor = '#3182CE'; // Blue
+    }
+
+    if (badgeText) {
+      doc.roundedRect(240, 15, 120, 13, 4).fill(badgeColor);
+      doc.fillColor('#FFFFFF')
+         .font(fontBold)
+         .fontSize(7)
+         .text(badgeText, 240, 18, { width: 120, align: 'center' });
+    }
+
+    if (subtitleText) {
       doc.fillColor('#B7791F') // Premium gold/bronze color
          .font(fontBold)
          .fontSize(8.5)
-         .text(`A CUSTOM SELECTION FOR ${customerName.toUpperCase()}`, 50, 32, { width: 500, align: 'center' });
+         .text(subtitleText, 50, 32, { width: 500, align: 'center' });
     }
 
-    doc.rect(50, 50, 500, 60).fill('#1A252C');
+    doc.rect(50, 50, 500, 60).fill(bannerColor);
     doc.fillColor('#FFFFFF')
        .font(fontBold)
        .fontSize(16)
@@ -247,18 +278,40 @@ app.post('/', async (req, res) => {
        .lineTo(550, colsY + 15)
        .stroke();
 
-    // Gold/Bronze shaded box for valuation
-    doc.roundedRect(320, colsY + 25, 230, 70, 6).fillAndStroke('#FCF8F2', '#E9D8FD');
-    doc.fillColor('#B7791F').font(fontBold).fontSize(9);
+    // Gold/Bronze shaded box for valuation (styled based on campaign type)
+    let valBg = '#FCF8F2';
+    let valBorder = '#E9D8FD';
+    let valText = '#B7791F';
+    let valIcon = '★';
+
+    if (campaignType === 'PriceDrop') {
+      valBg = '#FFF5F5';
+      valBorder = '#FED7D7';
+      valText = '#C53030';
+      valIcon = '▼'; // Down arrow for price drop
+    } else if (campaignType === 'JustListed') {
+      valBg = '#FEFCBF';
+      valBorder = '#FEEBC8';
+      valText = '#975A16';
+      valIcon = '★';
+    } else if (campaignType === 'PrivateInvite') {
+      valBg = '#EDF2F7';
+      valBorder = '#CBD5E0';
+      valText = '#2B6CB0';
+      valIcon = '✦';
+    }
+
+    doc.roundedRect(320, colsY + 25, 230, 70, 6).fillAndStroke(valBg, valBorder);
+    doc.fillColor(valText).font(fontBold).fontSize(9);
     
     const valuationList = valuation.split(',').map(v => v.trim()).filter(Boolean);
     doc.y = colsY + 33;
     if (valuationList.length > 0) {
       valuationList.slice(0, 3).forEach(val => {
-        doc.text(`★ ${val}`, 330, doc.y, { width: 210, lineGap: 2 });
+        doc.text(`${valIcon} ${val}`, 330, doc.y, { width: 210, lineGap: 2 });
       });
     } else {
-      doc.text('★ High investment yield potential.', 330, doc.y, { width: 210 });
+      doc.text(`${valIcon} High investment yield potential.`, 330, doc.y, { width: 210 });
     }
 
     // Offset below two-column section
